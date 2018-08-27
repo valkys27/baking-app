@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Backing App</string>
+
+    <string name="ingredients_title">
+        <u>
+            <b>Ingredients:</b>
+        </u>
+    </string>
+    <string name="next_step">next step</string>
+    <string name="previous_step">previous step</string>
+    <string name="ok_button_text">ok</string>
+</resources>
