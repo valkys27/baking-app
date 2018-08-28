@@ -59,8 +59,9 @@ public class DetailActivity extends BaseActivity<RecipeDetailPresenter> implemen
     public void onRecipeClick(Recipe recipe) {
         setTitle(recipe.getName());
         adapter.setData(recipe.getSteps());
-        if (twoPaneMode || isStepSelected) {
-            getPresenter().clickOnStep();
+        if (isStepSelected || twoPaneMode) {
+            if (fullscreenVideo)
+                hideButtons();
             return;
         }
         hideButtons();

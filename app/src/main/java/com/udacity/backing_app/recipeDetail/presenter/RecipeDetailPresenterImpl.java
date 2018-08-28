@@ -24,13 +24,6 @@ public class RecipeDetailPresenterImpl extends BasePresenter<RecipeDetailView> i
         addSubscription(getRecipe());
     }
 
-    @Override
-    public void clickOnStep() {
-        if (rxStates.stepSubject().hasValue()) {
-            rxStates.clickStep().onNext(rxStates.stepSubject().getValue());
-        }
-    }
-
     private Subscription getRecipe() {
         return rxStates.recipeSubject().subscribe(recipe -> getView().onRecipeClick(recipe));
     }
