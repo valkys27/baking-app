@@ -1,13 +1,10 @@
 package com.udacity.backing_app.recipeStepDetail.view;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.*;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.TextView;
 import butterknife.*;
 import com.google.android.exoplayer2.*;
@@ -27,6 +24,7 @@ public class StepDetailFragment extends BaseFragment<StepDetailPresenter> implem
 
     public static final String TAG = StepDetailFragment.class.getSimpleName();
     private static final String VIDEO_POSITION_KEY = "position";
+    private static final String VIDEO_PLAYED_WHEN_READY_KEY = "played";
 
     @Nullable
     @BindView(R.id.instructions_text_tv)
@@ -41,19 +39,24 @@ public class StepDetailFragment extends BaseFragment<StepDetailPresenter> implem
     private SimpleExoPlayer mPlayer;
 
     private long videoPosition = -1;
+    private boolean videoPlayedWhenReady = true;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (mPlayer != null)
+        if (mPlayer != null) {
             outState.putLong(VIDEO_POSITION_KEY, mPlayer.getCurrentPosition());
+            outState.putBoolean(VIDEO_PLAYED_WHEN_READY_KEY, mPlayer.getPlayWhenReady());
+        }
         super.onSaveInstanceState(outState);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null && savedInstanceState.containsKey(VIDEO_POSITION_KEY))
-            videoPosition = savedInstanceState.getLong(VIDEO_POSITION_KEY);
+        if (savedInstanceState != null) {
+            videoPosition = savedInstanceState.getLong(VIDEO_POSITION_KEY, -1);
+            videoPlayedWhenReady = savedInstanceState.getBoolean(VIDEO_PLAYED_WHEN_READY_KEY, true);
+        }
         return super.onCreateView(inflater, parent, savedInstanceState);
     }
 
@@ -94,7 +97,7 @@ public class StepDetailFragment extends BaseFragment<StepDetailPresenter> implem
             mPlayer.prepare(videoSource, false, true);
             if (videoPosition != -1)
                 mPlayer.seekTo(videoPosition);
-            mPlayer.setPlayWhenReady(true);
+            mPlayer.setPlayWhenReady(videoPlayedWhenReady);
         } else if (!fullScreenVideo)
             mPlayerView.setVisibility(View.GONE);
     }
@@ -104,12 +107,6 @@ public class StepDetailFragment extends BaseFragment<StepDetailPresenter> implem
         super.onStop();
         if (Util.SDK_INT > 23)
             releasePlayer();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        releasePlayer();
     }
 
     private void releasePlayer() {
